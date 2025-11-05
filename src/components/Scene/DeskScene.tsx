@@ -1,0 +1,127 @@
+// components/Scene/DeskScene.tsx
+import { useEffect } from 'react'
+import { Environment, useTexture } from '@react-three/drei'
+import { Desk } from './Models/Desk'
+import { Laptop } from './Models/Laptop/Laptop'
+import { Headphones } from './Models/Headphones/Headphones'
+import { Lamp } from './Models/Lamp/Lamp'
+import { Chair } from './Models/Chair'
+import { Pen } from './Models/Pen'
+import { CameraRig } from './CameraRig'
+import { DevControls } from './DevControls'
+import { useCamera } from '../../hooks/useCamera'
+import * as THREE from 'three'
+import { Book } from './Models/Book/Book'
+import { MusicWidget } from './Models/Headphones/MusicWidget'
+// import { useButtonInteractions } from '../../hooks/useButtonInteractions'
+import { useModels } from '../../hooks/useModels'
+
+interface DeskSceneProps {
+  onLoaded: () => void
+  lampColor: string
+  setLampColor: (v: string) => void
+  setColorPickerOpen: (v: boolean) => void
+  colorPickerOpen: boolean
+}
+
+export function DeskScene({ onLoaded, lampColor, setLampColor, setColorPickerOpen, colorPickerOpen }: DeskSceneProps) {
+  const { isLoading: modelsLoading } = useModels()
+  // const [showMusicWidget, setShowMusicWidget] = useState(false);
+  const { currentView } = useCamera()
+  const devMode = false
+  
+  // useButtonInteractions()
+
+  useEffect(() => {
+    if (!modelsLoading) {
+      onLoaded()
+    }
+  }, [modelsLoading, onLoaded])
+
+  if (modelsLoading) {
+    return null
+  }
+
+  return (
+    <>
+      {devMode ? (
+        <DevControls enabled={true} />
+      ) : (
+        <CameraRig />
+      )}
+      
+      <Environment preset="night" background={false} backgroundBlurriness={0} resolution={128} />
+      
+      <Desk position={[0, -1.25, 0]} />
+      <Chair position={[1, -1.5, 2.5]} />
+      <Laptop position={[0, 2.5, -0.5]} rotation={[0, Math.PI * 0.08, 0]} />
+      <Headphones 
+        position={[-2.3, -1.25, 3]} 
+        rotation={[0, 0, 0]}      
+      />
+      <Pen position={[2.5, 2.45, -0.5]} rotation={[0, 0, 0]} />
+      <Lamp
+        position={[3.2, 2.4, -1.7]}
+        lampColor={lampColor}
+        setLampColor={setLampColor}
+        setColorPickerOpen={setColorPickerOpen}
+        colorPickerOpen={colorPickerOpen}
+      />
+      <group visible={currentView === 'headphone'}>
+        <MusicWidget position={[-3, 2.8, 0]} />
+      </group>
+
+      {currentView === 'headphone' && (
+        <MusicWidget position={[-3, 2.8, 0]} />
+      )}
+
+      <Book position={[1.3, 2.47, 0.6]} rotation={[0, -0.8, 1.54]}/> 
+
+      <CarpetPlane />
+    </>
+  )
+}
+
+function CarpetPlane() {
+  const [
+    colorMap,
+    normalMap,
+    roughnessMap,
+    aoMap,
+    displacementMap
+  ] = useTexture([
+    '/textures/floor_textures_purple/Floor_Color.jpg',
+    '/textures/floor_textures_purple/Floor_NormalGL.jpg',
+    '/textures/floor_textures_purple/Floor_Roughness.jpg',
+    '/textures/floor_textures_purple/Floor_AmbientOcclusion.jpg',
+    '/textures/floor_textures_purple/Floor_Displacement.jpg'
+  ])
+
+  colorMap.wrapS = colorMap.wrapT =
+  normalMap.wrapS = normalMap.wrapT =
+  roughnessMap.wrapS = roughnessMap.wrapT =
+  aoMap.wrapS = aoMap.wrapT =
+  displacementMap.wrapS = displacementMap.wrapT = THREE.RepeatWrapping
+
+  colorMap.repeat.set(4, 4)
+  normalMap.repeat.set(4, 4)
+  roughnessMap.repeat.set(4, 4)
+  aoMap.repeat.set(4, 4)
+  displacementMap.repeat.set(4, 4)
+
+  return (
+    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.5, 0]} receiveShadow>
+      <planeGeometry args={[10, 10, 256, 256]} />
+      <meshStandardMaterial
+        map={colorMap}
+        normalMap={normalMap}
+        roughnessMap={roughnessMap}
+        aoMap={aoMap}
+        displacementMap={displacementMap}
+        displacementScale={0.1}
+        roughness={1}
+        metalness={0}
+      />
+    </mesh>
+  )
+}

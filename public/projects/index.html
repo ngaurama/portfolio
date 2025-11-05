@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects Directory</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>/projects/</h1>
+            <nav>
+                <a href="#" id="back-link">← Back to Portfolio</a>
+            </nav>
+
+            <script>
+                const urlParams = new URLSearchParams(window.location.search);
+                const fromPage = urlParams.get('fromPage') || '0';
+                
+                document.getElementById('back-link').href = `../index.html?restorePage=${fromPage}`;
+            </script>
+            <!-- <nav>
+                <a href="../index.html">← Back to Portfolio</a>
+            </nav> -->
+        </header>
+        
+        <main>
+            <ul class="directory-list" id="project-list"></ul>
+        </main>
+        
+        <footer>
+            <p id="project-count">Loading...</p>
+        </footer>
+    </div>
+    <script>
+        async function loadRepos() {
+            const username = "ngaurama";
+            const ul = document.getElementById("project-list");
+
+            const res = await fetch(`https://api.github.com/users/${username}/repos?per_page=100`);
+            const repos = await res.json();
+
+            repos.sort((a, b) => a.name.localeCompare(b.name));
+
+            ul.innerHTML = "";
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const fromPage = urlParams.get('fromPage') || '0';
+
+            repos.forEach(repo => {
+                ul.innerHTML += `
+                    <li class="file">
+                        <a href="projects/index.html?name=${repo.name}&fromPage=${fromPage}">
+                            ${repo.name}/
+                        </a>
+                    </li>`;
+            });
+
+            document.getElementById("project-count").textContent =
+                `Total: ${repos.length} projects`;
+        }
+
+        loadRepos();
+        </script>
+</body>
+</html>

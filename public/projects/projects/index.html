@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Loading...</title>
+    <!-- <link rel="stylesheet" href="styles.css"> -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-clike.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-javascript.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-c.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-python.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-markup.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-typescript.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-yaml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-json.js"></script>
+
+</head>
+<body>
+    <div class="container">
+        <header>
+            <nav>
+                <a href="#" id="back-to-directory">← Back to Directory</a> | 
+                <a href="#" id="back-to-portfolio">← Back to Portfolio</a>
+                
+                <script>
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const repoName = urlParams.get('name');
+                    const fromPage = urlParams.get('fromPage') || '0';
+                    
+                    document.getElementById('back-to-directory').href = 
+                        `../index.html?fromPage=${fromPage}`;
+                    
+                    document.getElementById('back-to-portfolio').href = 
+                        `../../index.html?restorePage=${fromPage}`;
+                </script>
+            </nav>
+            <h1 id="project-title">Loading...</h1>
+        </header>
+
+        <main>
+            <!-- Project Actions -->
+            <div class="project-actions">
+                <a href="#readme">README</a> |
+                <a href="#files">Files</a> |
+                <a id="github-link" target="_blank">GitHub ↗</a>
+                <span id="live-demo"></span>
+            </div>
+            
+            <hr>
+            
+            <article id="readme-content">
+                <h2>README.md</h2>
+                <div class="readme-body">
+                    <p>Loading README from GitHub...</p>
+                </div>
+            </article>
+            
+            <section id="files-section" style="display: none;">
+                <h2>Project Files</h2>
+                <ul class="file-list"></ul>
+            </section>
+            <article id="file-viewer" style="display:none;">
+                <h2 id="file-name"></h2>
+                <pre><code id="file-content" class="language-none"></code></pre>
+
+                <!-- <pre id="file-content"></pre> -->
+            </article>
+
+        </main>
+    </div>
+
+    <script>
+        let folderStack = [""]; 
+        const params = new URLSearchParams(window.location.search);
+
+        if (!repoName) {
+            document.body.innerHTML = "<h2>Error: No project selected.</h2>";
+            throw new Error("No repo name provided");
+        }
+
+        document.title = repoName + "/";
+        document.getElementById("project-title").textContent =
+            `/projects/${repoName}/`;
+        document.getElementById("github-link").href =
+            `https://github.com/ngaurama/${repoName}`;
+
+        document.querySelectorAll('.project-actions a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (this.getAttribute('href').startsWith('#')) {
+                    e.preventDefault();
+                    const target = this.getAttribute('href').substring(1);
+
+                    document.getElementById("readme-content").style.display =
+                        target === "readme" ? "block" : "none";
+                    document.getElementById("files-section").style.display =
+                        target === "files" ? "block" : "none";
+
+                    document.getElementById("file-viewer").style.display = "none";
+                }
+            });
+        });
+
+        function fixImagePaths(html) {
+            return html.replace(/src="(?!http)([^"]+)"/g, (match, p1) => {
+                return `src="https://raw.githubusercontent.com/ngaurama/${repoName}/main/${p1}"`;
+            });
+        }
+
+        async function loadReadme() {
+            try {
+                const url = `https://raw.githubusercontent.com/ngaurama/${repoName}/main/README.md`;
+                const markdown = await (await fetch(url)).text();
+
+                let html = marked.parse(markdown);
+                // console.log("HTML: ", html)
+                html = fixImagePaths(html);
+
+                document.querySelector(".readme-body").innerHTML = html;
+
+            } catch (err) {
+                document.querySelector(".readme-body").innerHTML =
+                    `<p>Could not load README. 
+                        <a href="https://github.com/ngaurama/${repoName}" target="_blank">
+                            View on GitHub
+                        </a>
+                    </p>`;
+            }
+        }
+
+        async function loadFiles(path = "") {
+            const res = await fetch(
+                `https://api.github.com/repos/ngaurama/${repoName}/contents/${path}`, {
+                    headers: {Authorization: 'Bearer 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'}
+                }
+            );
+            // `https://api.github.com/repos/ngaurama/${repoName}/contents/${path}`
+            const items = await res.json();
+
+            const ul = document.querySelector(".file-list");
+            ul.innerHTML = "";
+
+            if (folderStack.length > 1) {
+                ul.innerHTML += `
+                    <li>
+                        <a href="#" class="back-link">../</a>
+                    </li>
+                `;
+            }
+
+            items.forEach(item => {
+                if (item.type === "dir") {
+                    ul.innerHTML += `
+                        <li>
+                            <a href="#" data-path="${item.path}" class="folder-link">${item.name}/</a>
+                        </li>`;
+                } else {
+                    ul.innerHTML += `
+                        <li>
+                            <a href="#" data-path="${item.path}" class="file-link">${item.name}</a> 
+                        </li>`;
+                }
+            });
+            // 📄 📁
+
+            document.querySelectorAll(".folder-link").forEach(link => {
+                link.addEventListener("click", e => {
+                    e.preventDefault();
+                    const folder = link.getAttribute("data-path");
+
+                    folderStack.push(folder);
+                    loadFiles(folder);
+                });
+            });
+
+            const back = document.querySelector(".back-link");
+            if (back) {
+                back.addEventListener("click", e => {
+                    e.preventDefault();
+
+                    folderStack.pop();
+                    loadFiles(folderStack[folderStack.length - 1]);
+                });
+            }
+
+            document.querySelectorAll(".file-link").forEach(link => {
+                link.addEventListener("click", e => {
+                    e.preventDefault();
+                    const path = link.getAttribute("data-path");
+                    loadFileContent(path);
+                });
+            });
+        }
+
+        async function loadFileContent(path) {
+            const res = await fetch(`https://raw.githubusercontent.com/ngaurama/${repoName}/main/${path}`);
+            const text = await res.text();
+
+            const ext = path.split(".").pop();
+
+            const langMap = {
+                js: "javascript",
+                json: "json",
+                ts: "typescript",
+                py: "python",
+                c: "c",
+                h: "c",
+                html: "markup",
+                css: "css",
+                json: "json",
+                md: "markdown",
+                sh: "bash",
+                yml: "yaml",
+                json: "json"
+            };
+
+            if (/\.(png|jpg|jpeg|gif|webp|svg|glb|gltf)$/i.test(path)) {
+                const viewer = document.getElementById("file-viewer");
+                const title = document.getElementById("file-name");
+                viewer.style.display = "block";
+                viewer.innerHTML = `
+                    <h2>${title.textContent}</h2>
+                    <div style="padding:20px; font-size:1.1rem; color:#b00;">
+                        This file type cannot be previewed.<br>
+                    </div>
+                `;
+                return;
+            }
+
+            const lang = langMap[ext] || "markdown";
+
+            const codeEl = document.getElementById("file-content");
+
+            codeEl.className = `language-${lang}`;
+            codeEl.textContent = text;
+
+            Prism.highlightElement(codeEl);
+
+            document.getElementById("file-viewer").style.display = "block";
+        }
+
+        function checkLiveDemo(repo) {
+            const live = {
+                "ft_transcendence": "https://transcendence.ngaurama.com",
+                "stream_sh": "https://stream.ngaurama.com",
+                "craftai-hackathon": "https://hackathon.ngaurama.com",
+                "portfolio-babylon": "https://computer.ngaurama.com"
+            };
+
+            if (live[repo]) {
+                document.getElementById("live-demo").innerHTML =
+                    ` | <a href="${live[repo]}" target="_blank">Live Demo ↗</a>`;
+            }
+        }
+
+        // Initialize
+        loadReadme();
+        loadFiles();
+        checkLiveDemo(repoName);
+    </script>
+    <style>
+        /* body { 
+            background-color: black;
+            color: white;
+        } */
+        .readme-body img {
+            max-width: 100%;
+            height: auto;
+            /* display: block; */
+            margin: 1rem auto;
+        }
+    </style>
+
+</body>
+</html>
