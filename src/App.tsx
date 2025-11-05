@@ -3,7 +3,7 @@ import { Canvas } from '@react-three/fiber'
 import { DeskScene } from './components/Scene/DeskScene'
 import { useScrollNavigation } from './hooks/useScrollNavigation'
 import { useEffect, useRef, useState } from 'react'
-// import { useCamera } from './hooks/useCamera'
+import { useCamera } from './hooks/useCamera'
 import Header from './components/UI/Header'
 import Footer from './components/UI/Footer'
 import { HexColorPicker } from 'react-colorful'
@@ -16,7 +16,7 @@ import { LoadingScreen } from './components/UI/LoadingScreen'
 function App() {
   const [isLoading, setIsLoading] = useState(true)
   const [showLoadingScreen, setShowLoadingScreen] = useState(true)
-  // const { currentView } = useCamera()
+  const { moveToBookView } = useCamera()
   const lampRef = useRef<HTMLDivElement>(null)
   const [lampColor, setLampColor] = useState("#ffffff")
   const [colorPickerOpen, setColorPickerOpen] = useState(false)
@@ -55,7 +55,9 @@ function App() {
     const restorePage = urlParams.get('restorePage');
     
     if (restorePage) {
+      moveToBookView();
       const pageNumber = parseInt(restorePage);
+
       setPage(pageNumber);
       
       const newUrl = window.location.pathname;

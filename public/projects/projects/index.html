@@ -134,7 +134,7 @@
         async function loadFiles(path = "") {
             const res = await fetch(
                 `https://api.github.com/repos/ngaurama/${repoName}/contents/${path}`, {
-                    headers: {Authorization: 'Bearer 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'}
+                    // headers: {Authorization: `Bearer ${token}`}
                 }
             );
             // `https://api.github.com/repos/ngaurama/${repoName}/contents/${path}`
