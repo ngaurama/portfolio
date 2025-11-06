@@ -12,6 +12,9 @@ import { useAtom } from 'jotai'
 import { pageAtom } from './components/Scene/Models/Book/pages'
 import { VideoModal } from './components/Scene/Models/Book/VideoModal'
 import { LoadingScreen } from './components/UI/LoadingScreen'
+import Doodles from './components/UI/Doodles'
+import HelpOverlay from './components/UI/HelpOverlay'
+import { helpActiveAtom } from "./atoms/helpAtom";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true)
@@ -21,6 +24,7 @@ function App() {
   const [lampColor, setLampColor] = useState("#ffffff")
   const [colorPickerOpen, setColorPickerOpen] = useState(false)
   const [, setPage] = useAtom(pageAtom)
+  const [helpActive] = useAtom(helpActiveAtom);
   
   const [videoModal, setVideoModal] = useState({
     isOpen: false,
@@ -77,10 +81,10 @@ function App() {
   }, []);
 
 
-  const isMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-    navigator.userAgent
-  ) || window.innerWidth < 768;
-  // const isMobile = false;
+  // const isMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+  //   navigator.userAgent
+  // ) || window.innerWidth < 768;
+  const isMobile = window.innerWidth < 768;  
 
   const handleSceneLoaded = () => {
     setIsLoading(false)
@@ -95,14 +99,15 @@ function App() {
 
 return (
   <div className="w-full h-screen bg-blue-200 overflow-hidden">
-    <Header />
-    
+    {!helpActive && <Header />}     
+    {!helpActive && !isMobile &&  <Doodles />}     
     {/* Loading Screen */}
     {showLoadingScreen && (
-      <LoadingScreen 
-        isLoaded={!isLoading} 
-        onAnimationComplete={handleLoadingComplete}
-      />
+      <LoadingScreen onLoaded={handleLoadingComplete} />
+      // <LoadingScreen 
+      //   isLoaded={!isLoading} 
+      //   onAnimationComplete={handleLoadingComplete}
+      // />
     )}
     
     <VideoModal
@@ -147,7 +152,7 @@ return (
         </button>
       </div>
     )}
-
+    <HelpOverlay />
     <Canvas
       camera={{ 
         position: [0, 0, 0],
@@ -164,15 +169,15 @@ return (
         colorPickerOpen={colorPickerOpen}
       />
     </Canvas>
-
-    {!showLoadingScreen && (
+{/* 
+    {!showLoadingScreen && currentView === 'side' && (
       <>
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white animate-bounce">
+        <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 text-white animate-bounce">
           Scroll to explore
         </div>
-        <Footer />
       </>
-    )}
+    )} */}
+    <Footer />
   </div>
 )
 }

@@ -51,6 +51,24 @@ export function DeskScene({ onLoaded, lampColor, setLampColor, setColorPickerOpe
       )}
       
       <Environment preset="night" background={false} backgroundBlurriness={0} resolution={128} />
+      <mesh scale={50}>
+        <sphereGeometry args={[1, 64, 64]} />
+        <meshBasicMaterial color={lampColor} side={THREE.BackSide} transparent opacity={0.4} />
+      </mesh>
+
+
+      {/* <color attach="background" args={[lampColor]} /> */}
+      {/* <hemisphereLight
+        skyColor={lampColor}
+        groundColor="#222"
+        intensity={0.6}
+      />
+      <directionalLight
+        color={lampColor}
+        position={[5, 10, 5]}
+        intensity={0.4}
+      /> */}
+
       
       <Desk position={[0, -1.25, 0]} />
       <Chair position={[1, -1.5, 2.5]} />
@@ -67,6 +85,7 @@ export function DeskScene({ onLoaded, lampColor, setLampColor, setColorPickerOpe
         setColorPickerOpen={setColorPickerOpen}
         colorPickerOpen={colorPickerOpen}
       />
+
       <group visible={currentView === 'headphone'}>
         <MusicWidget position={[-3, 2.8, 0]} />
       </group>

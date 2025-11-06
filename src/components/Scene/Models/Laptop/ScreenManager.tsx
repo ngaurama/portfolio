@@ -10,6 +10,11 @@ interface ScreenManagerProps {
   isPoweredOn?: boolean
 }
 
+//  const isMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+//     navigator.userAgent
+//   ) || window.innerWidth < 768;
+const isMobile = window.innerWidth < 768;  
+
 export function ScreenManager({ screenMesh, isPoweredOn = true }: ScreenManagerProps) {
   const [inputText, setInputText] = useState('')
   const [cursorVisible, setCursorVisible] = useState(true)
@@ -67,12 +72,20 @@ export function ScreenManager({ screenMesh, isPoweredOn = true }: ScreenManagerP
 
     screenMesh.material = materialRef.current
     texture.flipY = false;
-
-    setOutputLines([
-      'Welcome to ngaurama-Linux 1.0 LTS',
-      '>> Type "help" to get started',
-      ''
-    ])
+ 
+    if (!isMobile) {
+      setOutputLines([
+        'Welcome to ngaurama-Linux 1.0 LTS',
+        '>> Type "help" to get started',
+        ''
+      ])
+    } else {
+      setOutputLines([
+        'Welcome to ngaurama-Linux 1.0 LTS',
+        '>> Please use desktop',
+        ''
+      ])
+    }
 
     setTimeout(() => {
       renderContent()
