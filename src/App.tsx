@@ -13,7 +13,6 @@ import { pageAtom } from './components/Scene/Models/Book/pages'
 import { VideoModal } from './components/Scene/Models/Book/VideoModal'
 import { LoadingScreen } from './components/UI/LoadingScreen'
 import Doodles from './components/UI/Doodles'
-import HelpOverlay from './components/UI/HelpOverlay'
 import { helpActiveAtom } from "./atoms/helpAtom";
 
 function App() {
@@ -101,7 +100,6 @@ return (
   <div className="w-full h-screen bg-blue-200 overflow-hidden">
     {!helpActive && <Header />}     
     {!helpActive && !isMobile &&  <Doodles />}     
-    {/* Loading Screen */}
     {showLoadingScreen && (
       <LoadingScreen onLoaded={handleLoadingComplete} />
       // <LoadingScreen 
@@ -152,11 +150,10 @@ return (
         </button>
       </div>
     )}
-    <HelpOverlay />
     <Canvas
       camera={{ 
         position: [0, 0, 0],
-        fov: isMobile ? 100 : 50,
+        fov: isMobile ? 85 : 50,
       }}
       shadows
     >

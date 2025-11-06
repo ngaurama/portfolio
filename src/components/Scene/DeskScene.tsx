@@ -29,6 +29,7 @@ export function DeskScene({ onLoaded, lampColor, setLampColor, setColorPickerOpe
   // const [showMusicWidget, setShowMusicWidget] = useState(false);
   const { currentView } = useCamera()
   const devMode = false
+
   
   // useButtonInteractions()
 

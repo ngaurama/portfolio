@@ -245,20 +245,22 @@ useFrame(() => {
       {currentSong && (
         <group position={[0.5, 1, -0.5]}>
           <Text
+            font="/fonts/gaegu-regular.woff"
             position={[-0.45, 0.1, 0.55]}
             rotation={[0, Math.PI * 0.4, 0]}
-            fontSize={0.15}
+            fontSize={0.22}
             color="black"
             anchorX="center"
             anchorY="middle"
-            maxWidth={1.5}
+            maxWidth={2}
           >
             {currentSong.title}
           </Text>
           <Text
-            position={[-0.45, -0.1, 0.55]}
+            font="/fonts/gaegu-regular.woff"
+            position={[-0.45, -0.2, 0.55]}
             rotation={[0, Math.PI * 0.4, 0]}
-            fontSize={0.12}
+            fontSize={0.15}
             color="black"
             anchorX="center"
             anchorY="middle"

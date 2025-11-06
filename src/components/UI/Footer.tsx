@@ -21,7 +21,7 @@ export default function Footer() {
                     onMouseLeave={() => setHelpActive(false)}
                     />
                     {helpActive && (
-                    <div className="fixed bottom-18 left-14 -translate-x-1/2 text-2xl text-black text-center z-20">
+                    <div className="fixed bottom-18 left-14 -translate-x-1/2 text-2xl text-black text-center drop-shadow-outline z-20">
                         Help
                     </div>
                     )}
@@ -37,7 +37,7 @@ export default function Footer() {
                     />
                     </a>
                     {helpActive && (
-                    <div className="fixed bottom-18 left-34 -translate-x-1/2 text-2xl text-black text-center z-20">
+                    <div className="fixed bottom-18 left-34 -translate-x-1/2 text-2xl text-black text-center drop-shadow-outline z-20">
                         GitHub
                     </div>
                     )}
@@ -53,7 +53,7 @@ export default function Footer() {
                     />
                     </a>
                     {helpActive && (
-                    <div className="fixed bottom-18 left-54 -translate-x-1/2 text-2xl text-black text-center z-20">
+                    <div className="fixed bottom-18 left-54 -translate-x-1/2 text-2xl text-black text-center drop-shadow-outline z-20">
                         Mail
                     </div>
                     )}

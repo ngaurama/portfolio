@@ -402,49 +402,49 @@ export const Page: React.FC<PageProps> = ({
   useEffect(() => {
     if (!skinnedMeshRef.current) return;
     
-    const mesh = skinnedMeshRef.current;
-
-    mesh.material = [
-      new MeshStandardMaterial({ color: whiteColor }),
-      new MeshStandardMaterial({ color: "#111" }),
-      new MeshStandardMaterial({ color: whiteColor }),
-      new MeshStandardMaterial({ color: whiteColor }),
-      new MeshStandardMaterial({
-        color: whiteColor,
-        map: picture,
-        transparent: true,
-        alphaTest: 0.1,
-      }),
-      new MeshStandardMaterial({
-        color: whiteColor,
-        map: picture2,
-        transparent: true,
-        alphaTest: 0.1,
-      }),
-    ];
     // const mesh = skinnedMeshRef.current;
+
     // mesh.material = [
-    //   new MeshStandardMaterial({ color: whiteColor, emissive: new Color(0x000000) }),
-    //   new MeshStandardMaterial({ color: "#111", emissive: new Color(0x000000) }),
-    //   new MeshStandardMaterial({ color: whiteColor, emissive: new Color(0x000000) }),
-    //   new MeshStandardMaterial({ color: whiteColor, emissive: new Color(0x000000) }),
+    //   new MeshStandardMaterial({ color: whiteColor }),
+    //   new MeshStandardMaterial({ color: "#111" }),
+    //   new MeshStandardMaterial({ color: whiteColor }),
+    //   new MeshStandardMaterial({ color: whiteColor }),
     //   new MeshStandardMaterial({
     //     color: whiteColor,
     //     map: picture,
     //     transparent: true,
     //     alphaTest: 0.1,
-    //     emissive: new Color("orange"),
-    //     emissiveIntensity: 0,
     //   }),
     //   new MeshStandardMaterial({
     //     color: whiteColor,
     //     map: picture2,
     //     transparent: true,
     //     alphaTest: 0.1,
-    //     emissive: new Color("orange"),
-    //     emissiveIntensity: 0,
     //   }),
     // ];
+    const mesh = skinnedMeshRef.current;
+    mesh.material = [
+      new MeshStandardMaterial({ color: whiteColor, emissive: new Color(0x000000) }),
+      new MeshStandardMaterial({ color: "#111", emissive: new Color(0x000000) }),
+      new MeshStandardMaterial({ color: whiteColor, emissive: new Color(0x000000) }),
+      new MeshStandardMaterial({ color: whiteColor, emissive: new Color(0x000000) }),
+      new MeshStandardMaterial({
+        color: whiteColor,
+        map: picture,
+        transparent: true,
+        alphaTest: 0.1,
+        emissive: new Color("orange"),
+        emissiveIntensity: 0,
+      }),
+      new MeshStandardMaterial({
+        color: whiteColor,
+        map: picture2,
+        transparent: true,
+        alphaTest: 0.1,
+        emissive: new Color("orange"),
+        emissiveIntensity: 0,
+      }),
+    ];
 
   }, [currentView, picture, picture2, number])
 
