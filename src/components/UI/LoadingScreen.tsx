@@ -1,3 +1,97 @@
+// import { useProgress } from '@react-three/drei'
+// import { useEffect, useState, useRef } from 'react'
+
+// interface LoadingScreenProps {
+//   onLoaded: () => void
+// }
+
+// const loadingImages = {
+//   10: '/loading/10percent.png',
+//   20: '/loading/20percent.png',
+//   30: '/loading/30percent.png',
+//   40: '/loading/40percent.png',
+//   50: '/loading/50percent.png',
+//   60: '/loading/60percent.png',
+//   70: '/loading/70percent.png',
+//   80: '/loading/80percent.png',
+//   90: '/loading/90percent.png',
+//   100: '/loading/100percent.png'
+// }
+
+// export function LoadingScreen({ onLoaded }: LoadingScreenProps) {
+//   const { progress, active } = useProgress()
+//   const [isVisible, setIsVisible] = useState(true)
+//   const [currentImage, setCurrentImage] = useState(loadingImages[10])
+//   const [fade, setFade] = useState(false)
+//   const currentImageRef = useRef(currentImage)
+
+//   useEffect(() => {
+//     const roundedProgress = Math.max(10, Math.min(Math.floor(progress / 10) * 10, 100)) as keyof typeof loadingImages
+//     const nextImage = loadingImages[roundedProgress]
+
+//     if (nextImage && nextImage !== currentImageRef.current) {
+//       setFade(true)
+//       const timer = setTimeout(() => {
+//         currentImageRef.current = nextImage
+//         setCurrentImage(nextImage)
+//         setFade(false)
+//       }, 200)
+
+//       return () => clearTimeout(timer)
+//     }
+//   }, [progress])
+
+//   useEffect(() => {
+//     if (!active && progress >= 100) {
+//       const timer = setTimeout(() => {
+//         setIsVisible(false)
+//         onLoaded()
+//       }, 1000)
+//       return () => clearTimeout(timer)
+//     }
+//   }, [active, progress, onLoaded])
+
+//   if (!isVisible) return null
+
+//   // const loadingMessages = [
+//   //   "Setting up the site...",
+//   //   "Loading 3D models...", 
+//   //   "Preparing textures...",
+//   //   "Final touches...",
+//   //   "Ready to explore!"
+//   // ]
+
+//   // const messageIndex = Math.min(Math.floor(progress / 20), loadingMessages.length - 1)
+
+//   return (
+//     <div className="fixed inset-0 bg-blue-50 z-50 flex items-center justify-center" style={{ fontFamily: "'gaegu', sans-serif" }}>
+//       <div className="text-black text-center w-100">
+//         {/* <p className="text-4xl mb-6">{loadingMessages[messageIndex]}</p> */}
+//         <p className="text-4xl mb-6">Setting up the site...</p>
+
+//         {/* Image-based Progress */}
+//         <div className="relative">
+//           <img
+//             src={currentImage}
+//             alt={`Loading ${Math.round(progress)}%`}
+//             className={`w-full h-full object-contain transition-opacity duration-300 ${fade ? 'opacity-0' : 'opacity-100'}`}
+//           />
+//         </div>
+
+//         {/* Progress Text */}
+//         {/* <div className="flex justify-between text-xl mb-2 mt-4">
+//           <span>{loadingMessages[messageIndex]}</span>
+//           <span className="font-mono">{Math.round(progress)}%</span>
+//         </div> */}
+
+//         <p className="text-xl text-black mt-4">
+//           Use desktop for best experience
+//         </p>
+//       </div>
+//     </div>
+//   )
+// }
+
 import { useProgress } from '@react-three/drei'
 import { useEffect, useState, useRef } from 'react'
 
@@ -6,6 +100,7 @@ interface LoadingScreenProps {
 }
 
 const loadingImages = {
+  0: '/loading/0percent.png',
   10: '/loading/10percent.png',
   20: '/loading/20percent.png',
   30: '/loading/30percent.png',
@@ -18,75 +113,83 @@ const loadingImages = {
   100: '/loading/100percent.png'
 }
 
+const TOTAL_LOADING_TIME = 4000
+// const IMAGE_DURATION = TOTAL_LOADING_TIME / Object.keys(loadingImages).length
+
 export function LoadingScreen({ onLoaded }: LoadingScreenProps) {
   const { progress, active } = useProgress()
   const [isVisible, setIsVisible] = useState(true)
-  const [currentImage, setCurrentImage] = useState(loadingImages[10])
+  const [currentImage, setCurrentImage] = useState(loadingImages[0])
   const [fade, setFade] = useState(false)
-  const currentImageRef = useRef(currentImage)
+  const [timedProgress, setTimedProgress] = useState(0)
+  
+  const startTimeRef = useRef(Date.now())
+  const imageIndexRef = useRef(0)
+  const imageKeys = Object.keys(loadingImages).map(Number).sort((a, b) => a - b)
 
   useEffect(() => {
-    const roundedProgress = Math.max(10, Math.min(Math.floor(progress / 10) * 10, 100)) as keyof typeof loadingImages
-    const nextImage = loadingImages[roundedProgress]
+    const interval = setInterval(() => {
+      const elapsed = Date.now() - startTimeRef.current
+      const progress = Math.min(100, (elapsed / TOTAL_LOADING_TIME) * 100)
+      setTimedProgress(progress)
+      
+      const targetIndex = Math.min(
+        Math.floor(progress / (100 / imageKeys.length)),
+        imageKeys.length - 1
+      )
+      
+      if (targetIndex > imageIndexRef.current) {
+        setFade(true)
+        setTimeout(() => {
+          imageIndexRef.current = targetIndex
+          setCurrentImage(loadingImages[imageKeys[targetIndex] as keyof typeof loadingImages])
+          setFade(false)
+        }, 200)
+      }
+    }, 50)
 
-    if (nextImage && nextImage !== currentImageRef.current) {
-      setFade(true)
-      const timer = setTimeout(() => {
-        currentImageRef.current = nextImage
-        setCurrentImage(nextImage)
-        setFade(false)
-      }, 200)
-
-      return () => clearTimeout(timer)
-    }
-  }, [progress])
+    return () => clearInterval(interval)
+  }, [])
 
   useEffect(() => {
-    if (!active && progress >= 100) {
+    const realLoadingDone = !active && progress >= 100
+    const timedSequenceDone = timedProgress >= 100
+    
+    if (realLoadingDone && timedSequenceDone) {
       const timer = setTimeout(() => {
         setIsVisible(false)
         onLoaded()
-      }, 1000)
+      }, 800)
       return () => clearTimeout(timer)
     }
-  }, [active, progress, onLoaded])
+  }, [active, progress, timedProgress, onLoaded])
 
   if (!isVisible) return null
 
-  // const loadingMessages = [
-  //   "Setting up the site...",
-  //   "Loading 3D models...", 
-  //   "Preparing textures...",
-  //   "Final touches...",
-  //   "Ready to explore!"
-  // ]
-
-  // const messageIndex = Math.min(Math.floor(progress / 20), loadingMessages.length - 1)
+  const displayProgress = Math.max(timedProgress, progress)
 
   return (
     <div className="fixed inset-0 bg-blue-50 z-50 flex items-center justify-center" style={{ fontFamily: "'gaegu', sans-serif" }}>
       <div className="text-black text-center w-100">
-        {/* <p className="text-4xl mb-6">{loadingMessages[messageIndex]}</p> */}
         <p className="text-4xl mb-6">Setting up the site...</p>
 
-        {/* Image-based Progress */}
         <div className="relative">
           <img
             src={currentImage}
-            alt={`Loading ${Math.round(progress)}%`}
-            className={`w-full h-full object-contain transition-opacity duration-300 ${fade ? 'opacity-0' : 'opacity-100'}`}
+            alt={`Loading ${Math.round(displayProgress)}%`}
+            className={`w-full h-full object-contain transition-opacity duration-300 ${
+              fade ? 'opacity-0' : 'opacity-100'
+            }`}
           />
         </div>
-
-        {/* Progress Text */}
-        {/* <div className="flex justify-between text-xl mb-2 mt-4">
-          <span>{loadingMessages[messageIndex]}</span>
-          <span className="font-mono">{Math.round(progress)}%</span>
-        </div> */}
 
         <p className="text-xl text-black mt-4">
           Use desktop for best experience
         </p>
+        
+        {/* <div className="text-sm text-gray-600 mt-2">
+          {Math.round(displayProgress)}% loaded
+        </div> */}
       </div>
     </div>
   )
