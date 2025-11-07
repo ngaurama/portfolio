@@ -340,6 +340,7 @@ export const Page: React.FC<PageProps> = ({
   const lastOpened = useRef(opened)
   const skinnedMeshRef = useRef<SkinnedMesh<BufferGeometry, Material[]>>(null);
   const [, setPage] = useAtom(pageAtom)
+  // const [hoverSide, setHoverSide] = useState<"left" | "right" | null>(null);
 
   const lastContentChange = useRef(Date.now());
 
@@ -401,50 +402,52 @@ export const Page: React.FC<PageProps> = ({
 
   useEffect(() => {
     if (!skinnedMeshRef.current) return;
-    
-    // const mesh = skinnedMeshRef.current;
+    if (front === 'cover_6' || back === 'back_final') {
+      const mesh = skinnedMeshRef.current;
+      mesh.material = [
+        new MeshStandardMaterial({ color: whiteColor, emissive: new Color(0x000000) }),
+        new MeshStandardMaterial({ color: "#111", emissive: new Color(0x000000) }),
+        new MeshStandardMaterial({ color: whiteColor, emissive: new Color(0x000000) }),
+        new MeshStandardMaterial({ color: whiteColor, emissive: new Color(0x000000) }),
+        new MeshStandardMaterial({
+          color: whiteColor,
+          map: picture,
+          transparent: true,
+          alphaTest: 0.1,
+          emissive: new Color("gray"),
+          emissiveIntensity: 0,
+        }),
+        new MeshStandardMaterial({
+          color: whiteColor,
+          map: picture2,
+          transparent: true,
+          alphaTest: 0.1,
+          emissive: new Color("gray"),
+          emissiveIntensity: 0,
+        }),
+      ];
+    } else {
+      const mesh = skinnedMeshRef.current;
 
-    // mesh.material = [
-    //   new MeshStandardMaterial({ color: whiteColor }),
-    //   new MeshStandardMaterial({ color: "#111" }),
-    //   new MeshStandardMaterial({ color: whiteColor }),
-    //   new MeshStandardMaterial({ color: whiteColor }),
-    //   new MeshStandardMaterial({
-    //     color: whiteColor,
-    //     map: picture,
-    //     transparent: true,
-    //     alphaTest: 0.1,
-    //   }),
-    //   new MeshStandardMaterial({
-    //     color: whiteColor,
-    //     map: picture2,
-    //     transparent: true,
-    //     alphaTest: 0.1,
-    //   }),
-    // ];
-    const mesh = skinnedMeshRef.current;
-    mesh.material = [
-      new MeshStandardMaterial({ color: whiteColor, emissive: new Color(0x000000) }),
-      new MeshStandardMaterial({ color: "#111", emissive: new Color(0x000000) }),
-      new MeshStandardMaterial({ color: whiteColor, emissive: new Color(0x000000) }),
-      new MeshStandardMaterial({ color: whiteColor, emissive: new Color(0x000000) }),
-      new MeshStandardMaterial({
-        color: whiteColor,
-        map: picture,
-        transparent: true,
-        alphaTest: 0.1,
-        emissive: new Color("orange"),
-        emissiveIntensity: 0,
-      }),
-      new MeshStandardMaterial({
-        color: whiteColor,
-        map: picture2,
-        transparent: true,
-        alphaTest: 0.1,
-        emissive: new Color("orange"),
-        emissiveIntensity: 0,
-      }),
-    ];
+      mesh.material = [
+        new MeshStandardMaterial({ color: whiteColor }),
+        new MeshStandardMaterial({ color: "#111" }),
+        new MeshStandardMaterial({ color: whiteColor }),
+        new MeshStandardMaterial({ color: whiteColor }),
+        new MeshStandardMaterial({
+          color: whiteColor,
+          map: picture,
+          transparent: true,
+          alphaTest: 0.1,
+        }),
+        new MeshStandardMaterial({
+          color: whiteColor,
+          map: picture2,
+          transparent: true,
+          alphaTest: 0.1,
+        }),
+      ];
+    }
 
   }, [currentView, picture, picture2, number])
 
@@ -492,6 +495,12 @@ export const Page: React.FC<PageProps> = ({
       const target = i === 0 ? group.current : bone
       if (!target) return
 
+      // const hoverInfluence =
+      // hoverTurn * Math.max(0, (i - (PAGE_SEGMENTS -28)) / 28); 
+      // const deg = hoverSide === "left" ? 0.0 : -0.1;
+      // const hoverAngle = degToRad(deg) * hoverInfluence; 
+      // bone.rotation.y += hoverAngle;
+
       const insideCurveIntensity = i < 8 ? Math.sin(i * 0.2 + 1.45) : 0
       const outsideCurveIntensity = i >= 12 ? Math.cos(i * 0.3 + 0.2) : 0
       const turningIntensity = Math.sin(i * Math.PI * (1 / bones.length)) * turningTime
@@ -508,7 +517,7 @@ export const Page: React.FC<PageProps> = ({
       const foldIntensity =
         i > 8 ? Math.sin(i * Math.PI * (1 / bones.length) - 0.5) * turningTime : 0
       easing.dampAngle(target.rotation, "x", foldRotationAngle * foldIntensity, easingFactorFold, delta)
-    })    
+    })
   })
 
   const isEdgeHit = (e: ThreeEvent<MouseEvent>) => {
@@ -522,6 +531,21 @@ export const Page: React.FC<PageProps> = ({
 
     return isEdge
   };
+  // const getEdgeHitSide = (e: ThreeEvent<MouseEvent>): "left" | "right" | null => {
+  //   const face = e.face;
+  //   if (!face) return null;
+
+  //   const vertexIndex = face.a;
+  //   const boneIndex = pageGeometry.attributes.skinIndex.getX(vertexIndex);
+
+  //   const isEdge = boneIndex >= PAGE_SEGMENTS - 4;
+  //   if (!isEdge) return null;
+
+  //   const x = e.point.x;
+  //   // console.log("X:, Y", x, e.point.y)
+
+  //   return x < 1 ? "left" : "right";
+  // };
 
   return (
     <group
@@ -538,6 +562,23 @@ export const Page: React.FC<PageProps> = ({
           // setHoverTurn(0);
         }
       }}
+      // onPointerMove={(e) => {
+      //   if (currentView !== "book") return;
+      //   e.stopPropagation();
+
+      //   const side = getEdgeHitSide(e);
+
+      //   if (side) {
+      //     setHighlighted(true);
+      //     setHoverTurn(1);
+      //     setHoverSide(side);
+      //   } else {
+      //     setHighlighted(false);
+      //     setHoverTurn(0);
+      //     setHoverSide(null);
+      //   }
+      // }}
+
       onPointerLeave={(e) => {
         if (currentView !== "book") return;
         e.stopPropagation();

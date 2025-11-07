@@ -90,10 +90,10 @@ export function DeskScene({ onLoaded, lampColor, setLampColor, setColorPickerOpe
       <group visible={currentView === 'headphone'}>
         <MusicWidget position={[-3, 2.8, 0]} />
       </group>
-
+{/* 
       {currentView === 'headphone' && (
         <MusicWidget position={[-3, 2.8, 0]} />
-      )}
+      )} */}
 
       <Book position={[1.3, 2.47, 0.6]} rotation={[0, -0.8, 1.54]}/> 
 
