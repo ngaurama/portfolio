@@ -1113,8 +1113,8 @@ const createNotebookPages = () => {
       {
         position: vec3(0.05, 0.24, 0),
         size: vec3(0.55, 0.04, 0.005),
-        name: `Linkedin connect`,
-        onClick: () => {hotspotActions.openLink("https://linkedin.com/in/ngaurama")},
+        name: `Github connect`,
+        onClick: () => {hotspotActions.openLink("https://github.com/ngaurama")},
         debugColor: "red",
         side: "front" as const,
       },
