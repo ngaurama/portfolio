@@ -15,19 +15,17 @@ interface UseModelsReturn {
 export function useModels(): UseModelsReturn {
   const [isLoading, setIsLoading] = useState(true)
 
-  // Load your actual model paths here
-  const laptop = useGLTF('/models/laptop_rounded.glb')
-  const headphones = useGLTF('/models/headphones.glb') 
-  const lamp = useGLTF('/models/lamp_2.glb')
-  const desk = useGLTF('/models/desk.glb')
-  const chair = useGLTF('/models/chair/source/chair.glb')
-  const pen = useGLTF('/models/ballpoint_pen.glb')
-  const music_widget = useGLTF('/models/music_widget.glb')
+  const laptop = useGLTF('/models/laptop.glb')
+  const headphones = useGLTF('/models/optimized_headphones.glb') 
+  const lamp = useGLTF('/models/lamp.glb')
+  const desk = useGLTF('/models/optimized_desk.glb')
+  const chair = useGLTF('/models/optimized_chair.glb')
+  const pen = useGLTF('/models/optimized_ballpoint_pen.glb')
+  const music_widget = useGLTF('/models/optimized_simple_music_widget.glb')
 
-  // Track when each model loads
   useEffect(() => {
     const allModelsLoaded = laptop && headphones && lamp && desk && chair && pen && music_widget
-    
+
     // console.log('Model loading status:', {
     //   laptop: !!laptop,
     //   headphones: !!headphones,

@@ -279,8 +279,10 @@ export const Page: React.FC<PageProps> = ({
     const urls = new Set<string>();
     const visited = new Set<string>();
     
-    urls.add(`/textures/book/${front}.jpg`);
-    urls.add(`/textures/book/${back}.jpg`);
+    urls.add(`/textures/book_webp/${front}.webp`);
+    urls.add(`/textures/book_webp/${back}.webp`);
+    // urls.add(`/textures/book/${front}.jpg`);
+    // urls.add(`/textures/book/${back}.jpg`);
     
     const findAllToggleTextures = (hotspots: Hotspot[] = []) => {
       hotspots.forEach(hotspot => {
@@ -293,9 +295,10 @@ export const Page: React.FC<PageProps> = ({
         visited.add(hotspotId);
         
         if (hotspot.toggleContent) {
-          urls.add(`/textures/book/${hotspot.toggleContent.front}.jpg`);
-          urls.add(`/textures/book/${hotspot.toggleContent.back}.jpg`);
-          
+          // urls.add(`/textures/book/${hotspot.toggleContent.front}.jpg`);
+          // urls.add(`/textures/book/${hotspot.toggleContent.back}.jpg`);
+          urls.add(`/textures/book_webp/${hotspot.toggleContent.front}.webp`);
+          urls.add(`/textures/book_webp/${hotspot.toggleContent.back}.webp`);
           if (hotspot.toggleContent.hotspots) {
             findAllToggleTextures(hotspot.toggleContent.hotspots);
           }
@@ -531,21 +534,21 @@ export const Page: React.FC<PageProps> = ({
 
     return isEdge
   };
-  // const getEdgeHitSide = (e: ThreeEvent<MouseEvent>): "left" | "right" | null => {
-  //   const face = e.face;
-  //   if (!face) return null;
+  const getEdgeHitSide = (e: ThreeEvent<MouseEvent>): "left" | "right" | null => {
+    const face = e.face;
+    if (!face) return null;
 
-  //   const vertexIndex = face.a;
-  //   const boneIndex = pageGeometry.attributes.skinIndex.getX(vertexIndex);
+    const vertexIndex = face.a;
+    const boneIndex = pageGeometry.attributes.skinIndex.getX(vertexIndex);
 
-  //   const isEdge = boneIndex >= PAGE_SEGMENTS - 4;
-  //   if (!isEdge) return null;
+    const isEdge = boneIndex >= PAGE_SEGMENTS - 4;
+    if (!isEdge) return null;
 
-  //   const x = e.point.x;
-  //   // console.log("X:, Y", x, e.point.y)
+    const x = e.point.x;
+    // console.log("X:, Y", x, e.point.y)
 
-  //   return x < 1 ? "left" : "right";
-  // };
+    return x < 1 ? "left" : "right";
+  };
 
   return (
     <group
@@ -585,14 +588,26 @@ export const Page: React.FC<PageProps> = ({
         setHighlighted(false);
         // setHoverTurn(0);
       }}
+      // onClick={(e) => {
+      //   if (currentView !== "book") return;
+      //   e.stopPropagation();
+      //   if (isEdgeHit(e)) {
+      //     setPage(opened ? number : number + 1);
+      //     setHighlighted(false);
+      //   }
+      // }}
       onClick={(e) => {
         if (currentView !== "book") return;
         e.stopPropagation();
-        if (isEdgeHit(e)) {
-          setPage(opened ? number : number + 1);
-          setHighlighted(false);
-        }
-      }}     
+
+        const side = getEdgeHitSide(e);
+        if (!side) return;
+
+        setPage((prev) => (side === "right" ? prev + 1 : Math.max(prev - 1, 0)));
+        setHighlighted(false);
+      }}
+
+
     >
       <primitive
         object={manualSkinnedMesh}

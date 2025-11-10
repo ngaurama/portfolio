@@ -7,7 +7,7 @@ import { useCamera } from './hooks/useCamera'
 import Header from './components/UI/Header'
 import Footer from './components/UI/Footer'
 import { HexColorPicker } from 'react-colorful'
-// import { Perf } from 'r3f-perf'
+import { Perf } from 'r3f-perf'
 import { useAtom } from 'jotai'
 import { pageAtom } from './components/Scene/Models/Book/pages'
 import { VideoModal } from './components/Scene/Models/Book/VideoModal'
@@ -96,87 +96,89 @@ function App() {
   useEffect(() => {
   }, [isLoading, showLoadingScreen])
 
-return (
-  <div className="w-full h-screen bg-blue-200 overflow-hidden">
-    {!helpActive && <Header />}     
-    {!helpActive && !isMobile &&  <Doodles />}     
-    {showLoadingScreen && (
-      <LoadingScreen onLoaded={handleLoadingComplete} />
-      // <LoadingScreen 
-      //   isLoaded={!isLoading} 
-      //   onAnimationComplete={handleLoadingComplete}
-      // />
-    )}
-    
-    <VideoModal
-      videoUrl={videoModal.videoUrl}
-      isOpen={videoModal.isOpen}
-      onClose={closeVideoModal}
-      title={videoModal.title}
-    />
-    
-    {colorPickerOpen && (
-      <div
-        ref={lampRef}
-        style={{
-          position: "absolute",
-          top: "20px",
-          right: "20px",
-          padding: "12px",
-          background: "rgba(20,20,20,0.85)",
-          backdropFilter: "blur(6px)",
-          borderRadius: "12px",
-          zIndex: 9999
-        }}
-      >
-        <HexColorPicker
-          color={lampColor}
-          onChange={(color) => setLampColor(color)}
-        />
-
-        <button
-          style={{
-            marginTop: "10px",
-            width: "100%",
-            padding: "6px",
-            borderRadius: "8px",
-            background: "#444",
-            color: "white",
-            cursor: "pointer"
-          }}
-          onClick={() => setColorPickerOpen(false)}
-        >
-          Close
-        </button>
-      </div>
-    )}
-    <Canvas
-      camera={{ 
-        position: [0, 0, 0],
-        fov: isMobile ? 85 : 50,
-      }}
-      shadows
-    >
-      {/* <Perf /> */}
-      <DeskScene 
-        onLoaded={handleSceneLoaded}
-        lampColor={lampColor}
-        setLampColor={setLampColor}
-        setColorPickerOpen={setColorPickerOpen}
-        colorPickerOpen={colorPickerOpen}
+  return (
+    <div className="w-full h-screen bg-blue-200 overflow-hidden">
+      {!helpActive && <Header />}     
+      {!helpActive && !isMobile && <Doodles />}     
+      {showLoadingScreen && (
+        <LoadingScreen onLoaded={handleLoadingComplete} />
+        // <LoadingScreen 
+        //   isLoaded={!isLoading} 
+        //   onAnimationComplete={handleLoadingComplete}
+        // />
+      )}
+      
+      <VideoModal
+        videoUrl={videoModal.videoUrl}
+        isOpen={videoModal.isOpen}
+        onClose={closeVideoModal}
+        title={videoModal.title}
       />
-    </Canvas>
-{/* 
-    {!showLoadingScreen && currentView === 'side' && (
-      <>
-        <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 text-white animate-bounce">
-          Scroll to explore
+      
+      {colorPickerOpen && (
+        <div
+          ref={lampRef}
+          style={{
+            position: "absolute",
+            top: "20px",
+            right: "20px",
+            padding: "12px",
+            background: "rgba(20,20,20,0.85)",
+            backdropFilter: "blur(6px)",
+            borderRadius: "12px",
+            zIndex: 9999
+          }}
+        >
+          <HexColorPicker
+            color={lampColor}
+            onChange={(color) => setLampColor(color)}
+          />
+
+          <button
+            style={{
+              marginTop: "10px",
+              width: "100%",
+              padding: "6px",
+              borderRadius: "8px",
+              background: "#444",
+              color: "white",
+              cursor: "pointer"
+            }}
+            onClick={() => setColorPickerOpen(false)}
+          >
+            Close
+          </button>
         </div>
-      </>
-    )} */}
-    <Footer />
-  </div>
-)
+      )}
+      <Canvas
+        // frameloop="demand"
+        performance={{ min: 0.5 }}
+        camera={{ 
+          position: [0, 0, 0],
+          fov: isMobile ? 85 : 50,
+        }}
+        shadows
+      >
+        <Perf />
+        <DeskScene 
+          onLoaded={handleSceneLoaded}
+          lampColor={lampColor}
+          setLampColor={setLampColor}
+          setColorPickerOpen={setColorPickerOpen}
+          colorPickerOpen={colorPickerOpen}
+        />
+      </Canvas>
+  {/* 
+      {!showLoadingScreen && currentView === 'side' && (
+        <>
+          <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 text-white animate-bounce">
+            Scroll to explore
+          </div>
+        </>
+      )} */}
+      <Footer />
+    </div>
+  )
 }
 
 export default App

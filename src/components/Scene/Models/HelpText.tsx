@@ -1,8 +1,7 @@
-// components/Scene/HelpText3D.tsx
-import { useRef } from 'react'
-// import { useFrame } from '@react-three/fiber'
+import { useRef, useEffect, useState } from 'react'
 import * as THREE from 'three'
 import { Text } from '@react-three/drei'
+import { useCamera } from '../../../hooks/useCamera'
 
 interface HelpText3DProps {
   position: [number, number, number]
@@ -11,6 +10,10 @@ interface HelpText3DProps {
   fontSize?: number
   maxWidth?: number
   color?: string
+  fadeOut?: boolean
+  outlineWidth?: number
+  outlineColor?: string
+  outlineOpacity?: number
 }
 
 export function HelpText3D({ 
@@ -19,15 +22,32 @@ export function HelpText3D({
   rotation = [0, 0, 0],
   fontSize = 0.15,
   maxWidth = 2,
-  color = '#000000'
+  color = '#000000',
+  fadeOut = false,
+  outlineWidth,
+  outlineColor,
+  outlineOpacity
 }: HelpText3DProps) {
   const textRef = useRef<THREE.Group>(null)
+  const [opacity, setOpacity] = useState(1)
+  const {currentView} = useCamera()
 
-    //   useFrame((state) => {
-    //     if (textRef.current) {
-    //       textRef.current.lookAt(state.camera.position)
-    //     }
-    //   })
+  useEffect(() => {
+    if (fadeOut && currentView !== 'side') {
+      let frame: number
+      const duration = 1500
+      const start = performance.now()
+      const animate = (time: number) => {
+        const t = Math.min((time - start) / duration, 1)
+        setOpacity(1 - t)
+        if (t < 1) frame = requestAnimationFrame(animate)
+      }
+      frame = requestAnimationFrame(animate)
+      return () => cancelAnimationFrame(frame)
+    } else {
+      setOpacity(1)
+    }
+  }, [fadeOut])
 
   return (
     <group ref={textRef} position={position} rotation={rotation}>
@@ -39,16 +59,16 @@ export function HelpText3D({
         textAlign="left"
         anchorX="center"
         anchorY="middle"
-        // outlineWidth={0.02}
-        // outlineColor="#ffffff"
-        // outlineOpacity={0.8}
+        material-toneMapped={false}
+        material-color={new THREE.Color(color)}
+        material-transparent
+        material-opacity={opacity}
+        outlineWidth={outlineWidth}
+        outlineColor={outlineColor}
+        outlineOpacity={outlineOpacity}
       >
         {text}
       </Text>
-      {/* <mesh position={[0, 0, -0.01]}>
-        <planeGeometry args={[maxWidth, fontSize * 4]} />
-        <meshBasicMaterial color="#ffffff" transparent opacity={0.7} />
-      </mesh> */}
     </group>
   )
 }

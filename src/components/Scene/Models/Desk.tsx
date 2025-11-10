@@ -1,10 +1,10 @@
-// components/Scene/Models/Desk.tsx
-import { useRef } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import * as THREE from 'three'
 import { useModels } from '../../../hooks/useModels'
 import { HelpText3D } from './HelpText'
 import { useAtom } from 'jotai'
 import { helpActiveAtom } from '../../../atoms/helpAtom'
+import { useCamera } from '../../../hooks/useCamera'
 
 interface DeskProps {
   position?: [number, number, number]
@@ -12,10 +12,31 @@ interface DeskProps {
 
 export function Desk({ position = [0, 0, 0] }: DeskProps) {
   const { models } = useModels()
+  const { currentView } = useCamera()
   const deskRef = useRef<THREE.Group>(null)
-  const [helpActive] = useAtom(helpActiveAtom)
+  const [helpActive, setHelpActive] = useAtom(helpActiveAtom)
+  const [visible, setVisible] = useState(helpActive)
+
+  useEffect(() => {
+    if (helpActive && currentView === 'side') {
+      setVisible(true)
+    } else if (visible) {
+      if (currentView !== 'side') {
+        const timer = setTimeout(() => {
+          setVisible(false)
+          setHelpActive(false)
+        }, 1500)
+        return () => clearTimeout(timer)
+      } else {
+        setVisible(false)
+        setHelpActive(false)
+      }
+    }
+  }, [helpActive, currentView])
+
 
   if (!models.desk) return null
+  const isMobile = window.innerWidth < 768;  
 
   return (
     <group ref={deskRef} position={position}>
@@ -24,8 +45,8 @@ export function Desk({ position = [0, 0, 0] }: DeskProps) {
         scale={0.4}
         rotation={[0, Math.PI * 0.5, 0]}
       />
-      {/* &nbsp; */}
-      {helpActive && (
+
+      {visible && (
         <>
           <HelpText3D
             position={[3, 4.8, 1.2]}
@@ -33,69 +54,49 @@ export function Desk({ position = [0, 0, 0] }: DeskProps) {
             text="Click on the book to view main portfolio content."
             fontSize={0.35}
             maxWidth={2.8}
+            fadeOut={currentView !== 'side'}
           />
-
           <HelpText3D
             position={[-0.5, 5.6, -3]}
-            rotation={[0.12, 0.1, 0]}
+            rotation={[0.12, 0.1, 0.05]}
             text="Click on laptop to interact with the terminal."
             fontSize={0.35}
             maxWidth={3}
+            fadeOut={currentView !== 'side'}
           />
-
           <HelpText3D
             position={[3, 5.75, -1.1]}
             rotation={[0, -0.8, 0]}
             text="Click &nbsp;&nbsp;on the lamp to        change the lighting   color"
             fontSize={0.25}
             maxWidth={2.3}
+            fadeOut={currentView !== 'side'}
           />
 
           <HelpText3D
-            position={[-3.9, 4.8, -0.5]}
-            rotation={[0, 0.1, 0]}
-            text="Click on the headphones for music. (coming soon)"
+            position={[-2.5, 3.8, 1.5]}
+            rotation={[-1.5, 0, 0]}
+            color={"black"}
+            text="Click on the    headphones        for music.        (coming soon)"
             fontSize={0.25}
             maxWidth={2.2}
+            fadeOut={currentView !== 'side'}
+            // outlineWidth={0.01}
+            // outlineColor="white"
+            // outlineOpacity={0.8}
           />
 
           <HelpText3D
-            position={[-3, 4.18, 3]}
-            rotation={[0, 0, 0]}
+            position={!isMobile ? [-2.8, 4.18, 3] : [-3, 4.18, 3]}
+            rotation={[0, 0, 0.01]}
             color={"white"}
-            text="Scroll to change views"
+            text={!isMobile ? "Scroll/click to change views" : "Click to change views"}
             fontSize={0.23}
             maxWidth={5}
+            fadeOut={currentView !== 'side'}
           />
         </>
       )}
     </group>
   )
 }
-
-// // components/Scene/Models/Desk.tsx
-// import { useRef } from 'react'
-// // import { useFrame } from '@react-three/fiber'
-// import * as THREE from 'three'
-// import { useModels } from '../../../hooks/useModels'
-
-// interface DeskProps {
-//   position?: [number, number, number]
-// }
-
-// export function Desk({ position = [0, 0, 0] }: DeskProps) {
-//   const { models } = useModels()
-//   const deskRef = useRef<THREE.Group>(null)
-
-//   if (!models.desk) return null
-
-//   return (
-//     <group ref={deskRef} position={position}>
-//       <primitive 
-//         object={models.desk.scene} 
-//         scale={0.4}
-//         rotation={[0, Math.PI * 0.5, 0]}
-//       />
-//     </group>
-//   )
-// }

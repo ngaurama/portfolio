@@ -37,7 +37,7 @@ export function ScreenManager({ screenMesh, isPoweredOn = true }: ScreenManagerP
 
   const files = {
     '/': ['files', 'programs', 'images'],
-    '/files': ['AboutMe.txt', 'Notes.txt', 'Bible.txt'],
+    '/files': ['AboutMe.txt', 'Notes.txt', 'Hamlet.txt'],
     '/images': ['42.jpeg', 'my_room.jpg'],
     '/programs': ['fordjohnson']
   }

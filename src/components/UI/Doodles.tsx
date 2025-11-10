@@ -7,7 +7,7 @@ export default function Doodles() {
             {currentView === 'side'  && (
                 <>
                     <img
-                        src="/computer_black.gif"
+                        src="/computer.gif"
                         alt="Computer Doodle"
                         title="Hello, Wordl!"
                         className="fixed top-[12%] left-[5%] -rotate-20 w-[12vw] max-w-[200px] min-w-[100px] z-20 hover:scale-110 transition-transform"

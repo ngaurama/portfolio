@@ -4,7 +4,7 @@ import { Environment, useTexture } from '@react-three/drei'
 import { Desk } from './Models/Desk'
 import { Laptop } from './Models/Laptop/Laptop'
 import { Headphones } from './Models/Headphones/Headphones'
-import { Lamp } from './Models/Lamp/Lamp'
+import { Lamp } from './Models/Lamp'
 import { Chair } from './Models/Chair'
 import { Pen } from './Models/Pen'
 import { CameraRig } from './CameraRig'
@@ -51,10 +51,10 @@ export function DeskScene({ onLoaded, lampColor, setLampColor, setColorPickerOpe
         <CameraRig />
       )}
       
-      <Environment preset="night" background={false} backgroundBlurriness={0} resolution={128} />
+      <Environment preset="night" background={false} backgroundBlurriness={0} resolution={16} />
       <mesh scale={50}>
         <sphereGeometry args={[1, 64, 64]} />
-        <meshBasicMaterial color={lampColor} side={THREE.BackSide} transparent opacity={0.4} />
+        <meshBasicMaterial color={lampColor} side={THREE.BackSide} transparent opacity={0.5} />
       </mesh>
 
 
@@ -106,33 +106,46 @@ function CarpetPlane() {
   const [
     colorMap,
     normalMap,
-    roughnessMap,
-    aoMap,
-    displacementMap
+    // roughnessMap,
+    // aoMap,
+    // displacementMap
   ] = useTexture([
-    '/textures/floor_textures_purple/Floor_Color.jpg',
-    '/textures/floor_textures_purple/Floor_NormalGL.jpg',
-    '/textures/floor_textures_purple/Floor_Roughness.jpg',
-    '/textures/floor_textures_purple/Floor_AmbientOcclusion.jpg',
-    '/textures/floor_textures_purple/Floor_Displacement.jpg'
+    '/textures/floor_textures/Floor_Color.webp',
+    '/textures/floor_textures/Floor_NormalGL.webp',
+    // '/textures/floor_textures_purple/Floor_Roughness.jpg',
+    // '/textures/floor_textures_purple/Floor_AmbientOcclusion.jpg',
+    // '/textures/floor_textures_purple/Floor_Displacement.jpg'
   ])
 
   colorMap.wrapS = colorMap.wrapT =
-  normalMap.wrapS = normalMap.wrapT =
-  roughnessMap.wrapS = roughnessMap.wrapT =
-  aoMap.wrapS = aoMap.wrapT =
-  displacementMap.wrapS = displacementMap.wrapT = THREE.RepeatWrapping
+  normalMap.wrapS = normalMap.wrapT = THREE.RepeatWrapping
+  // roughnessMap.wrapS = roughnessMap.wrapT =
+  // aoMap.wrapS = aoMap.wrapT =
+  // displacementMap.wrapS = displacementMap.wrapT = THREE.RepeatWrapping
 
   colorMap.repeat.set(4, 4)
   normalMap.repeat.set(4, 4)
-  roughnessMap.repeat.set(4, 4)
-  aoMap.repeat.set(4, 4)
-  displacementMap.repeat.set(4, 4)
+  // roughnessMap.repeat.set(4, 4)
+  // aoMap.repeat.set(4, 4)
+  // displacementMap.repeat.set(4, 4)
+  useEffect(() => {
+    [colorMap, normalMap].forEach(texture => {
+      texture.anisotropy = 4
+      texture.generateMipmaps = true
+      texture.minFilter = THREE.LinearMipmapLinearFilter
+    })
+  }, [colorMap, normalMap])
 
   return (
     <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.5, 0]} receiveShadow>
-      <planeGeometry args={[10, 10, 256, 256]} />
+      {/* <planeGeometry args={[10, 10, 256, 256]} /> */}
+      <planeGeometry args={[10, 10, 16, 16]} />
       <meshStandardMaterial
+        map={colorMap}
+        normalMap={normalMap}
+      />
+
+      {/* <meshStandardMaterial
         map={colorMap}
         normalMap={normalMap}
         roughnessMap={roughnessMap}
@@ -141,7 +154,7 @@ function CarpetPlane() {
         displacementScale={0.1}
         roughness={1}
         metalness={0}
-      />
+      /> */}
     </mesh>
   )
 }

@@ -1051,7 +1051,7 @@ const createNotebookPages = () => {
         onClick: () => {
           const videoNumber = currentIndex - 1;
           hotspotActions.openVideo(
-            `/textures/book/piano_practice_${videoNumber}.mp4`, 
+            `/videos/optimized/piano_practice_${videoNumber}.webm`, 
             `Piano Practice #${videoNumber}`
           );
         },
@@ -1090,7 +1090,7 @@ const createNotebookPages = () => {
 
   pages.push({
     front: "connect_1",
-    back: "plain",
+    back: "back_final",
     hotspots: [
       // hotspot_contents_back,
       hotspot_contents_front,
@@ -1129,11 +1129,11 @@ const createNotebookPages = () => {
     ]
   });
 
-  pages.push({
-    front: "plain",
-    back: "back_final",
-  });
-    return pages;
+  // pages.push({
+  //   front: "plain",
+  //   back: "back_final",
+  // });
+  return pages;
   
 };
 

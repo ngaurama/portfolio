@@ -91,8 +91,3 @@ export function Laptop({ position = [0, 0, 0.3], rotation = [0, Math.PI * -0.1, 
     </group>
   )
 }
-
-
-
-
-// BTW I know I say this a lot, and chat clowns me about it, but if anyone has any questions about the runs, feel free to ask away. I'll do my best to share my knowledge about silksong or silksong speedrunning or anything like that, so just ask away.
