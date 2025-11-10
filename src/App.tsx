@@ -7,7 +7,7 @@ import { useCamera } from './hooks/useCamera'
 import Header from './components/UI/Header'
 import Footer from './components/UI/Footer'
 import { HexColorPicker } from 'react-colorful'
-import { Perf } from 'r3f-perf'
+// import { Perf } from 'r3f-perf'
 import { useAtom } from 'jotai'
 import { pageAtom } from './components/Scene/Models/Book/pages'
 import { VideoModal } from './components/Scene/Models/Book/VideoModal'
@@ -159,7 +159,7 @@ function App() {
         }}
         shadows
       >
-        <Perf />
+        {/* <Perf /> */}
         <DeskScene 
           onLoaded={handleSceneLoaded}
           lampColor={lampColor}
