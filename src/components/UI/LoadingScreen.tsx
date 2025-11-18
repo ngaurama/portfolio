@@ -25,7 +25,7 @@ export function LoadingScreen({ onLoaded }: LoadingScreenProps) {
   const { progress, active } = useProgress()
   const [isVisible, setIsVisible] = useState(true)
   const [currentImage, setCurrentImage] = useState(loadingImages[0])
-  const [fade, setFade] = useState(false)
+  // const [fade, setFade] = useState(false)
   const [timedProgress, setTimedProgress] = useState(0)
   
   const startTimeRef = useRef(Date.now())
@@ -56,11 +56,11 @@ export function LoadingScreen({ onLoaded }: LoadingScreenProps) {
       )
       
       if (targetIndex > imageIndexRef.current) {
-        setFade(true)
+        // setFade(true)
         setTimeout(() => {
           imageIndexRef.current = targetIndex
           setCurrentImage(loadingImages[imageKeys[targetIndex] as keyof typeof loadingImages])
-          setFade(false)
+          // setFade(false)
         }, 200)
       }
       
@@ -98,19 +98,20 @@ export function LoadingScreen({ onLoaded }: LoadingScreenProps) {
   return (
     <div className="fixed inset-0 bg-blue-50 z-50 flex items-center justify-center" style={{ fontFamily: "'gaegu', sans-serif" }}>
       <div className="text-black text-center w-100">
-        <p className="text-4xl mb-6">Setting up the site...</p>
+        <p className="text-4xl mb-6 cursor-pointer non-selectable">Setting up the site...</p>
 
-        <div className="relative">
+        <div className="relative cursor-pointer non-selectable">
           <img
             src={currentImage}
             alt={`Loading ${Math.round(displayProgress)}%`}
-            className={`w-full h-full object-contain transition-opacity duration-300 ${
-              fade ? 'opacity-0' : 'opacity-100'
-            }`}
+            // className={`w-full h-full object-contain transition-opacity duration-300 cursor-pointer non-selectable ${
+            //   fade ? 'opacity-0' : 'opacity-100'
+            // }`}
+            className={`w-full h-full object-contain transition-opacity duration-300 cursor-pointer non-selectable}`}
           />
         </div>
 
-        <p className="text-xl text-black mt-4">
+        <p className="text-xl text-black mt-4 cursor-pointer non-selectable">
           Use desktop for best experience
         </p>
       </div>

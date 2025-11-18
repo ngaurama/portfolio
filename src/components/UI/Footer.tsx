@@ -39,7 +39,7 @@ export default function Footer() {
                     <img
                         src="/help.gif"
                         alt="Help"
-                        className="fixed m-4 bottom-0 left-10 transform -translate-x-1/2 w-[60px] z-20 hover:scale-110 transition-transform cursor-pointer"
+                        className="fixed m-4 bottom-0 left-10 transform -translate-x-1/2 w-[60px] z-20 hover:scale-110 cursor-pointer non-selectable transition-transform cursor-pointer"
                         onMouseEnter={() => {
                             if (!isMobile) setHelpActive(true);
                         }}
@@ -53,7 +53,7 @@ export default function Footer() {
                         }}
                     />
                     {helpActive && (
-                    <div className="fixed bottom-18 left-14 -translate-x-1/2 text-2xl text-black text-center drop-shadow-outline z-20">
+                    <div className="fixed bottom-18 left-14 -translate-x-1/2 text-2xl text-black cursor-pointer non-selectable text-center drop-shadow-outline z-20">
                         Help
                     </div>
                     )}
@@ -65,11 +65,11 @@ export default function Footer() {
                     <img
                         src="/github.gif"
                         alt="Github Logo"
-                        className="fixed m-4 bottom-0 left-30 transform -translate-x-1/2 w-[60px] z-20 hover:scale-110 transition-transform"
+                        className="fixed m-4 bottom-0 left-30 transform -translate-x-1/2 w-[60px] z-20 cursor-pointer non-selectable hover:scale-110 transition-transform"
                     />
                     </a>
                     {helpActive && (
-                    <div className="fixed bottom-18 left-34 -translate-x-1/2 text-2xl text-black text-center drop-shadow-outline z-20">
+                    <div className="fixed bottom-18 left-34 -translate-x-1/2 text-2xl text-black text-center cursor-pointer non-selectable drop-shadow-outline z-20">
                         GitHub
                     </div>
                     )}
@@ -81,11 +81,11 @@ export default function Footer() {
                     <img
                         src="/mail.gif"
                         alt="Mail Logo"
-                        className="fixed m-4 bottom-0 left-50 transform -translate-x-1/2 w-[70px] z-20 hover:scale-110 transition-transform"
+                        className="fixed m-4 bottom-0 left-50 transform -translate-x-1/2 w-[70px] z-20 hover:scale-110 cursor-pointer non-selectable transition-transform"
                     />
                     </a>
                     {helpActive && (
-                    <div className="fixed bottom-18 left-54 -translate-x-1/2 text-2xl text-black text-center drop-shadow-outline z-20">
+                    <div className="fixed bottom-18 left-54 -translate-x-1/2 text-2xl text-black text-center cursor-pointer non-selectable drop-shadow-outline z-20">
                         Mail
                     </div>
                     )}

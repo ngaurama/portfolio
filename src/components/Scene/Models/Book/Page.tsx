@@ -534,21 +534,21 @@ export const Page: React.FC<PageProps> = ({
 
     return isEdge
   };
-  const getEdgeHitSide = (e: ThreeEvent<MouseEvent>): "left" | "right" | null => {
-    const face = e.face;
-    if (!face) return null;
+  // const getEdgeHitSide = (e: ThreeEvent<MouseEvent>): "left" | "right" | null => {
+  //   const face = e.face;
+  //   if (!face) return null;
 
-    const vertexIndex = face.a;
-    const boneIndex = pageGeometry.attributes.skinIndex.getX(vertexIndex);
+  //   const vertexIndex = face.a;
+  //   const boneIndex = pageGeometry.attributes.skinIndex.getX(vertexIndex);
 
-    const isEdge = boneIndex >= PAGE_SEGMENTS - 4;
-    if (!isEdge) return null;
+  //   const isEdge = boneIndex >= PAGE_SEGMENTS - 4;
+  //   if (!isEdge) return null;
 
-    const x = e.point.x;
-    // console.log("X:, Y", x, e.point.y)
+  //   const x = e.point.x;
+  //   // console.log("X:, Y", x, e.point.y)
 
-    return x < 1 ? "left" : "right";
-  };
+  //   return x < 1 ? "left" : "right";
+  // };
 
   return (
     <group
@@ -588,24 +588,24 @@ export const Page: React.FC<PageProps> = ({
         setHighlighted(false);
         // setHoverTurn(0);
       }}
-      // onClick={(e) => {
-      //   if (currentView !== "book") return;
-      //   e.stopPropagation();
-      //   if (isEdgeHit(e)) {
-      //     setPage(opened ? number : number + 1);
-      //     setHighlighted(false);
-      //   }
-      // }}
       onClick={(e) => {
         if (currentView !== "book") return;
         e.stopPropagation();
-
-        const side = getEdgeHitSide(e);
-        if (!side) return;
-
-        setPage((prev) => (side === "right" ? prev + 1 : Math.max(prev - 1, 0)));
-        setHighlighted(false);
+        if (isEdgeHit(e)) {
+          setPage(opened ? number : number + 1);
+          setHighlighted(false);
+        }
       }}
+      // onClick={(e) => {
+      //   if (currentView !== "book") return;
+      //   e.stopPropagation();
+
+      //   const side = getEdgeHitSide(e);
+      //   if (!side) return;
+
+      //   setPage((prev) => (side === "right" ? prev + 1 : Math.max(prev - 1, 0)));
+      //   setHighlighted(false);
+      // }}
 
 
     >

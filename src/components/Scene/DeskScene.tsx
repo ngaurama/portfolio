@@ -1,6 +1,6 @@
 // components/Scene/DeskScene.tsx
 import { useEffect } from 'react'
-import { Environment, useTexture } from '@react-three/drei'
+import { useTexture } from '@react-three/drei'
 import { Desk } from './Models/Desk'
 import { Laptop } from './Models/Laptop/Laptop'
 import { Headphones } from './Models/Headphones/Headphones'
@@ -51,7 +51,7 @@ export function DeskScene({ onLoaded, lampColor, setLampColor, setColorPickerOpe
         <CameraRig />
       )}
       
-      <Environment preset="night" background={false} backgroundBlurriness={0} resolution={16} />
+      {/* <Environment preset="night" background={false} backgroundBlurriness={0} resolution={16} /> */}
       <mesh scale={50}>
         <sphereGeometry args={[1, 64, 64]} />
         <meshBasicMaterial color={lampColor} side={THREE.BackSide} transparent opacity={0.5} />
